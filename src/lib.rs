@@ -9,3 +9,4 @@ pub mod ops {
 }
 
 pub use matrix::Matrix;
+pub use ops::matrix_ops;   
