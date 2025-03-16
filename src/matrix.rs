@@ -32,7 +32,7 @@ impl<T> Index<(usize, usize)> for Matrix<T>{
 
     fn index(&self, index: (usize, usize)) -> &Self::Output {
         let (i, j) = index;
-        assert!(i < self.rows && j > self.cols, "Index out of bounds");
+        assert!(i < self.rows && j < self.cols, "Index out of bounds");
         &self.data[i * self.cols + j]
     }
 }
