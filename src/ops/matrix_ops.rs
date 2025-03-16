@@ -1,5 +1,22 @@
 use crate::matrix::Matrix;
 
+pub fn identity<T: Copy + From<i32>>(n: usize) -> Matrix<T> {
+    assert!(n > 0, "n must be greater than 0");
+
+    let mut data = Vec::with_capacity(n * n);
+
+    for i in 0..n {
+        for j in 0..n {
+            if i == j {
+                data.push(T::from(1));
+            } else {
+                data.push(T::from(0));
+            }
+        }
+    }
+
+    return Matrix::from_vec(n, n, data)
+}
 //Matrix add function, data must be able to be added and dublicated, returns new matrix
 pub fn add <T: std::ops::Add<Output = T> + Copy>(
     a: &Matrix<T>, 
@@ -148,7 +165,7 @@ where
     return result;
 }
 
-pub fn inverse_matrix<T>(
+pub fn inverse<T>(
     a: &Matrix<T>,
 ) -> Matrix<T> 
 where
