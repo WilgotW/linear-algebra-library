@@ -9,4 +9,6 @@ fn main() {
     println!("Matrix A: {:?}", a);
     println!("Matrix B: {:?}", b);
     println!("Result (A + B): {:?}", result);
+
+    println!("Transposed A: {:?}", matrix_ops::transpose(&a));
 }

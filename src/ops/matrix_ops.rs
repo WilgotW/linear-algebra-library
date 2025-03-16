@@ -89,3 +89,17 @@ pub fn mat_mul<T: std::ops::Mul<Output = T> + std::ops::Add<Output = T> + Copy>(
 
     return Matrix::from_vec(a.rows, b.cols, result_data);
 }
+
+pub fn transpose<T: Copy>(
+    a: &Matrix<T>,
+) -> Matrix<T> {
+    let mut result_data: Vec<T> = Vec::with_capacity(a.data.len());
+
+    for i in 0..a.cols {
+        for j in 0..a.rows{
+            result_data.push(a[(j, i)]);
+        }
+    }
+
+    return Matrix::from_vec(a.cols, a.rows, result_data);
+}
