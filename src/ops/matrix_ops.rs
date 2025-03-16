@@ -103,3 +103,97 @@ pub fn transpose<T: Copy>(
 
     return Matrix::from_vec(a.cols, a.rows, result_data);
 }
+
+pub fn determinant<T>(
+    a: &Matrix<T>
+) -> T
+where
+    T: Copy
+        + std::ops::Add<Output = T>
+        + std::ops::Sub<Output = T>
+        + std::ops::Mul<Output = T>
+        + From<i32>,
+{
+    assert_eq!(a.rows, a.cols, "matrix must be square");
+
+    let n = a.rows;
+    // 1x1 matrix
+    if n == 1 {
+        return a[(0, 0)];
+    }
+    //2x2 matrix
+    if n == 2 {
+        return a[(0, 0)] * a[(1, 1)] - a[(0, 1)] * a[(1, 0)];
+    }
+
+    // Recursive case
+    let mut result: T = T::from(0);
+
+    for i in 0..n {
+        let mut sub_data = Vec::new();
+
+        for row in 1..n {
+            for col in 0..n {
+                if col != i {
+                    sub_data.push(a[(row, col)]);
+                }
+            }
+        }
+
+        let submatrix = Matrix::from_vec(n - 1, n - 1, sub_data);
+        let sign = if i % 2 == 0 { T::from(1) } else { T::from(-1) };
+        result = result + sign * a[(0, i)] * determinant(&submatrix);
+    }
+
+    return result;
+}
+
+pub fn inverse_matrix<T>(
+    a: &Matrix<T>,
+) -> Matrix<T> 
+where
+    T: Copy
+        + std::ops::Add<Output = T>
+        + std::ops::Sub<Output = T>
+        + std::ops::Mul<Output = T>
+        + std::ops::Div<Output = T>
+        + std::cmp::PartialEq
+        + From<i32>, 
+{
+    assert_eq!(a.rows, a.cols, "Matrix must be square");
+
+    let det: T = determinant(a);
+    assert!(det != T::from(0), "Matrix is singular, det = 0");
+
+    let n = a.rows;
+
+    let mut cofactor_data = Vec::with_capacity(n * n);
+
+    for i in 0..a.rows {
+        for j in 0..a.cols{
+            
+            let mut minor_data: Vec<T> = Vec::new();
+
+            for row in 0..n {
+                if row == i {continue;}
+                for col in 0..n {
+                    if col == j {continue;}
+
+                    minor_data.push(a[(row, col)]);
+                }   
+            }
+
+            let minor_matrix = Matrix::from_vec(n-1, n-1, minor_data);
+            let sign = if (j + i) % 2 == 0 {T::from(1)} else {T::from(-1)};
+            let cofactor = sign * determinant(&minor_matrix);
+            cofactor_data.push(cofactor);
+        }
+    }
+    let cofactor_matrix = Matrix::from_vec(n, n, cofactor_data);
+    let adjugate = transpose(&cofactor_matrix);
+
+    //A^-1 = 1/det(A) * adjugate(A)
+    let inverse_data = adjugate.data.iter().map(|&x| x / det).collect();
+
+    return Matrix::from_vec(n, n, inverse_data);
+}
