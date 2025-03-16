@@ -19,6 +19,4 @@ fn main() {
 
     let identity_matrix: Matrix<i32> = matrix_ops::identity(4);
     pretty_print_matrix("Identity matrix of 4:", &identity_matrix);
-
-
 }
